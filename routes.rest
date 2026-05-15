@@ -1,5 +1,43 @@
-GET http://localhost:3000/contacts
+@host = http://localhost:3000
+@id = REPLACE_ID_HERE
+
+### GET ALL CONTACTS
+GET {{host}}/contacts
 
 ###
 
-GET http://localhost:3000/contacts/PUT_CONTACT_ID_HERE
+### GET SINGLE CONTACT
+GET {{host}}/contacts/{{id}}
+
+###
+
+### CREATE CONTACT
+POST {{host}}/contacts
+Content-Type: application/json
+
+{
+  "firstName": "Tafadzwa",
+  "lastName": "Sibanda",
+  "email": "tafadzwa@gmail.com",
+  "favoriteColor": "Black",
+  "birthday": "2004-01-10"
+}
+
+###
+
+### UPDATE CONTACT
+PUT {{host}}/contacts/{{id}}
+Content-Type: application/json
+
+{
+  "firstName": "Tafadzwa",
+  "lastName": "Sibanda",
+  "email": "tafadzwa.updated@gmail.com",
+  "favoriteColor": "Blue",
+  "birthday": "2004-01-10"
+}
+
+###
+
+### DELETE CONTACT
+DELETE {{host}}/contacts/{{id}}

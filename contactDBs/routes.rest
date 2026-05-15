@@ -1,5 +1,21 @@
+### GET ALL CONTACTS
 GET http://localhost:3000/contacts
 
 ###
 
-GET http://localhost:3000/contacts/PUT_CONTACT_ID_HERE
+### GET SINGLE CONTACT
+GET http://localhost:3000/contacts/PUT_ID_HERE
+
+###
+
+### CREATE CONTACT
+POST http://localhost:3000/contacts
+Content-Type: application/json
+
+{
+  "firstName": "Tafadzwa",
+  "lastName": "Sibanda",
+  "email": "tafadzwa@gmail.com",
+  "favoriteColor": "Black",
+  "birthday": "2004-01-10"
+}
