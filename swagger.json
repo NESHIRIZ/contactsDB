@@ -7,6 +7,10 @@
   },
   "servers": [
     {
+      "url": "https://contactsdb-o4ps.onrender.com",
+      "description": "Deployed Render server (contactsdb-o4ps)"
+    },
+    {
       "url": "http://localhost:3000",
       "description": "Local development server"
     }
