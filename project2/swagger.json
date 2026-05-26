@@ -1,0 +1,272 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Project 2 API",
+    "description": "API for managing books and authors with CRUD operations.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Local development server"
+    }
+  ],
+  "paths": {
+    "/api/books": {
+      "get": {
+        "summary": "Get all books",
+        "responses": {
+          "200": {
+            "description": "List of books",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Book"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new book",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Book"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Book created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Validation error" }
+        }
+      }
+    },
+    "/api/books/{id}": {
+      "get": {
+        "summary": "Get a single book by id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Book found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Book" }
+              }
+            }
+          },
+          "404": { "description": "Book not found" }
+        }
+      },
+      "put": {
+        "summary": "Update an existing book",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Book" }
+            }
+          }
+        },
+        "responses": {
+          "204": { "description": "Book updated" },
+          "400": { "description": "Invalid request" },
+          "404": { "description": "Book not found" }
+        }
+      },
+      "delete": {
+        "summary": "Delete a book",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "204": { "description": "Book deleted" },
+          "404": { "description": "Book not found" }
+        }
+      }
+    },
+    "/api/authors": {
+      "get": {
+        "summary": "Get all authors",
+        "responses": {
+          "200": {
+            "description": "List of authors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Author"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new author",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Author" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Author created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Validation error" }
+        }
+      }
+    },
+    "/api/authors/{id}": {
+      "get": {
+        "summary": "Get a single author by id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Author found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Author" }
+              }
+            }
+          },
+          "404": { "description": "Author not found" }
+        }
+      },
+      "put": {
+        "summary": "Update an existing author",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Author" }
+            }
+          }
+        },
+        "responses": {
+          "204": { "description": "Author updated" },
+          "400": { "description": "Invalid request" },
+          "404": { "description": "Author not found" }
+        }
+      },
+      "delete": {
+        "summary": "Delete an author",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "204": { "description": "Author deleted" },
+          "404": { "description": "Author not found" }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Book": {
+        "type": "object",
+        "required": ["title", "authorId", "summary", "genre", "publisher", "publishedDate", "pages", "isbn"],
+        "properties": {
+          "_id": { "type": "string" },
+          "title": { "type": "string" },
+          "authorId": { "type": "string" },
+          "summary": { "type": "string" },
+          "genre": { "type": "string" },
+          "publisher": { "type": "string" },
+          "publishedDate": { "type": "string", "format": "date" },
+          "pages": { "type": "integer" },
+          "isbn": { "type": "string" }
+        }
+      },
+      "Author": {
+        "type": "object",
+        "required": ["firstName", "lastName", "bio", "birthDate", "nationality", "website", "genres", "awards"],
+        "properties": {
+          "_id": { "type": "string" },
+          "firstName": { "type": "string" },
+          "lastName": { "type": "string" },
+          "bio": { "type": "string" },
+          "birthDate": { "type": "string", "format": "date" },
+          "nationality": { "type": "string" },
+          "website": { "type": "string", "format": "uri" },
+          "genres": { "type": "string" },
+          "awards": { "type": "string" }
+        }
+      }
+    }
+  }
+}

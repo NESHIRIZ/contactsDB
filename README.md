@@ -1,36 +1,36 @@
-Contacts API
-=============
+# Contacts API
 
-This repository implements the Contacts API required for W02 Project: Contacts Part 2.
+This repository implements the Contacts API required for BYU-Idaho W03 Project: CRUD Operations.
 
-Live demo
+## Live demo
 - Render URL: https://contactsdb-o4ps.onrender.com
 - Swagger UI: https://contactsdb-o4ps.onrender.com/api-docs
 
-Repository
-- GitHub: https://github.com/you/yourRepo (replace with your repo URL)
+## Repository
+- GitHub: https://github.com/NESHIRIZ/contactsDB
 
-API Endpoints
+## API Endpoints
 - GET /contacts
 - GET /contacts/:id
 - POST /contacts
 - PUT /contacts/:id
 - DELETE /contacts/:id
 
-Local setup
-1. Copy `.env.example` (or create `.env`) and set:
+## Local setup
+1. Copy `.env.example` to `.env` and set your values:
 
-```
+```env
 MONGODB_URI=<your mongodb connection string>
+MONGODB_DB=contactsDB
 PORT=3000
 BASE_URL=http://localhost:3000
 ```
 
-2. Install and run locally:
+2. Install dependencies and run locally:
 
 ```bash
 npm install
-npm start
+npm run dev
 ```
 
 3. Seed the database (requires `MONGODB_URI` set):
@@ -39,23 +39,22 @@ npm start
 npm run seed
 ```
 
-Deployment to Render
-1. Create a new Render Web Service, connect your GitHub repo.
-2. Set the environment variables for the service (Render dashboard → Environment):
+## Deployment to Render
+1. Create a new Render Web Service and connect your GitHub repo.
+2. Configure service environment variables:
    - `MONGODB_URI` = your MongoDB connection string
-   - `BASE_URL` = https://contactsdb-o4ps.onrender.com
-3. Set the start command (if needed): `npm start` and deploy.
-4. After the service is live, visit `/api-docs` to confirm Swagger lists your Render URL.
+   - `MONGODB_DB` = `contactsDB`
+   - `BASE_URL` = your Render URL
+3. Use `npm start` as the start command.
+4. After deploy, verify Swagger at `/api-docs`.
 
-Video checklist (short)
-- Show Swagger UI at `https://contactsdb-o4ps.onrender.com/api-docs` and exercise each route.
-- Show MongoDB Compass with at least 5 contacts (fields: `firstName`, `lastName`, `email`, `favoriteColor`, `birthday`).
-- Show POST/PUT/DELETE modify the DB and show updates in Compass.
+## Notes
+- `.env` is ignored by git; `node_modules` is ignored by `.gitignore`.
+- The application listens on `process.env.PORT || 3000`.
+- Swagger documentation is available at `/api-docs` and includes request/response schemas.
+
+## Video checklist
+- Show Swagger UI and execute GET/POST/PUT/DELETE routes.
+- Show MongoDB Compass or Atlas data with contacts.
 - Show `.env` is not committed and `node_modules` is ignored.
-
-Notes
-- `server.js` updates the Swagger `servers` entry dynamically from `process.env.BASE_URL`.
-- If `npm run seed` fails due to network/DNS (Atlas), run the seed from a machine with network access.
-
-Contact
-- If you want, I can update the `package.json` `homepage` field and push a small README change to your repo.
+- Show Render deployment with `/api-docs` working.

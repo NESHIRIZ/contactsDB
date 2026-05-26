@@ -2,13 +2,13 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Contacts API",
-    "description": "API for creating, reading, updating, and deleting contacts.",
+    "description": "CRUD API for managing contact records with MongoDB and Swagger documentation.",
     "version": "1.0.0"
   },
   "servers": [
     {
       "url": "https://contactsdb-o4ps.onrender.com",
-      "description": "Deployed Render server (contactsdb-o4ps)"
+      "description": "Render deployment"
     },
     {
       "url": "http://localhost:3000",
@@ -29,6 +29,30 @@
                   "items": {
                     "$ref": "#/components/schemas/Contact"
                   }
+                },
+                "examples": {
+                  "contacts": {
+                    "value": [
+                      {
+                        "_id": "643a91d2f5eabd0012345678",
+                        "firstName": "Alice",
+                        "lastName": "Adams",
+                        "email": "alice@example.com",
+                        "favoriteColor": "Red",
+                        "birthday": "1990-01-01"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -42,7 +66,18 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Contact"
+                "$ref": "#/components/schemas/ContactInput"
+              },
+              "examples": {
+                "createContact": {
+                  "value": {
+                    "firstName": "John",
+                    "lastName": "Doe",
+                    "email": "john.doe@example.com",
+                    "favoriteColor": "Blue",
+                    "birthday": "1992-05-10"
+                  }
+                }
               }
             }
           }
@@ -59,12 +94,46 @@
                       "type": "string"
                     }
                   }
+                },
+                "examples": {
+                  "created": {
+                    "value": {
+                      "id": "643a91d2f5eabd0012345678"
+                    }
+                  }
                 }
               }
             }
           },
           "400": {
-            "description": "Validation error"
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "validationError": {
+                    "value": {
+                      "errors": [
+                        "firstName is required",
+                        "email must be a valid email address"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -89,12 +158,41 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Contact"
+                },
+                "examples": {
+                  "contact": {
+                    "value": {
+                      "_id": "643a91d2f5eabd0012345678",
+                      "firstName": "Alice",
+                      "lastName": "Adams",
+                      "email": "alice@example.com",
+                      "favoriteColor": "Red",
+                      "birthday": "1990-01-01"
+                    }
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Contact not found"
+            "description": "Contact not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       },
@@ -115,7 +213,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Contact"
+                "$ref": "#/components/schemas/ContactInput"
               }
             }
           }
@@ -125,10 +223,34 @@
             "description": "Contact updated successfully"
           },
           "400": {
-            "description": "Invalid request"
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Contact not found"
+            "description": "Contact not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       },
@@ -149,7 +271,34 @@
             "description": "Contact deleted successfully"
           },
           "404": {
-            "description": "Contact not found"
+            "description": "Contact not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -186,6 +335,49 @@
           "birthday": {
             "type": "string",
             "format": "date"
+          }
+        }
+      },
+      "ContactInput": {
+        "type": "object",
+        "required": [
+          "firstName",
+          "lastName",
+          "email",
+          "favoriteColor",
+          "birthday"
+        ],
+        "properties": {
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "favoriteColor": {
+            "type": "string"
+          },
+          "birthday": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       }

@@ -1,15 +1,20 @@
 {
-  "name": "my-project",
+  "name": "contacts-api",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Contacts CRUD API for BYU-Idaho W03 Project",
+  "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js",
+    "dev": "nodemon server.js",
     "seed": "node seeds/seedContacts.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": [
+    "contacts",
+    "api",
+    "mongodb",
+    "express"
+  ],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
@@ -18,7 +23,9 @@
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "mongodb": "^7.2.0",
-    "swagger-ui-express": "^5.0.1",
-    "cors": "^2.8.5"
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
   }
 }

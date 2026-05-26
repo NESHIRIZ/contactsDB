@@ -1,0 +1,97 @@
+@host = http://localhost:3000
+
+### GET ALL BOOKS
+GET {{host}}/api/books
+
+###
+
+### GET SINGLE BOOK
+GET {{host}}/api/books/{{bookId}}
+
+###
+
+### CREATE BOOK
+POST {{host}}/api/books
+Content-Type: application/json
+
+{
+  "title": "Pathway Programming",
+  "authorId": "REPLACE_WITH_AUTHOR_ID",
+  "summary": "A beginner-friendly guide to Node.js APIs.",
+  "genre": "Education",
+  "publisher": "BYU Press",
+  "publishedDate": "2026-05-01",
+  "pages": 320,
+  "isbn": "978-1234567890"
+}
+
+###
+
+### UPDATE BOOK
+PUT {{host}}/api/books/{{bookId}}
+Content-Type: application/json
+
+{
+  "title": "Pathway Programming Updated",
+  "authorId": "REPLACE_WITH_AUTHOR_ID",
+  "summary": "An updated guide to Node.js APIs.",
+  "genre": "Education",
+  "publisher": "BYU Press",
+  "publishedDate": "2026-05-01",
+  "pages": 340,
+  "isbn": "978-1234567890"
+}
+
+###
+
+### DELETE BOOK
+DELETE {{host}}/api/books/{{bookId}}
+
+###
+
+### GET ALL AUTHORS
+GET {{host}}/api/authors
+
+###
+
+### GET SINGLE AUTHOR
+GET {{host}}/api/authors/{{authorId}}
+
+###
+
+### CREATE AUTHOR
+POST {{host}}/api/authors
+Content-Type: application/json
+
+{
+  "firstName": "Ava",
+  "lastName": "Anderson",
+  "bio": "A writer and educator focused on web development.",
+  "birthDate": "1990-07-14",
+  "nationality": "American",
+  "website": "https://avaanderson.dev",
+  "genres": "Technology, Education",
+  "awards": "Best New Author 2025"
+}
+
+###
+
+### UPDATE AUTHOR
+PUT {{host}}/api/authors/{{authorId}}
+Content-Type: application/json
+
+{
+  "firstName": "Ava",
+  "lastName": "Anderson",
+  "bio": "A writer and educator focused on web development and APIs.",
+  "birthDate": "1990-07-14",
+  "nationality": "American",
+  "website": "https://avaanderson.dev",
+  "genres": "Technology, Education",
+  "awards": "Best New Author 2025"
+}
+
+###
+
+### DELETE AUTHOR
+DELETE {{host}}/api/authors/{{authorId}}

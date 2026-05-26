@@ -1,15 +1,17 @@
 const router = require('express').Router();
 
 const contactsController = require('../controllers/contacts');
+const validateContact = require('../middleware/validateContact');
+const validateObjectId = require('../middleware/validateObjectId');
 
 router.get('/', (req, res) => {
-  res.send('Contacts API Working');
+  res.json({ status: 'Contacts API is running' });
 });
 
 router.get('/contacts', contactsController.getAll);
-router.get('/contacts/:id', contactsController.getSingle);
-router.post('/contacts', contactsController.createContact);
-router.put('/contacts/:id', contactsController.updateContact);
-router.delete('/contacts/:id', contactsController.deleteContact);
+router.get('/contacts/:id', validateObjectId, contactsController.getSingle);
+router.post('/contacts', validateContact, contactsController.createContact);
+router.put('/contacts/:id', validateObjectId, validateContact, contactsController.updateContact);
+router.delete('/contacts/:id', validateObjectId, contactsController.deleteContact);
 
 module.exports = router;
