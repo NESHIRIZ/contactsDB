@@ -34,7 +34,7 @@
                   "contacts": {
                     "value": [
                       {
-                        "_id": "643a91d2f5eabd0012345678",
+                        "id": "643a91d2f5eabd0012345678",
                         "firstName": "Alice",
                         "lastName": "Adams",
                         "email": "alice@example.com",
@@ -88,17 +88,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string"
-                    }
-                  }
+                  "$ref": "#/components/schemas/Contact"
                 },
                 "examples": {
                   "created": {
                     "value": {
-                      "id": "643a91d2f5eabd0012345678"
+                      "id": "643a91d2f5eabd0012345678",
+                      "firstName": "John",
+                      "lastName": "Doe",
+                      "email": "john.doe@example.com",
+                      "favoriteColor": "Blue",
+                      "birthday": "1992-05-10"
                     }
                   }
                 }
@@ -162,7 +162,7 @@
                 "examples": {
                   "contact": {
                     "value": {
-                      "_id": "643a91d2f5eabd0012345678",
+                      "id": "643a91d2f5eabd0012345678",
                       "firstName": "Alice",
                       "lastName": "Adams",
                       "email": "alice@example.com",
@@ -219,8 +219,15 @@
           }
         },
         "responses": {
-          "204": {
-            "description": "Contact updated successfully"
+          "200": {
+            "description": "Contact updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Contact"
+                }
+              }
+            }
           },
           "400": {
             "description": "Invalid request",
@@ -267,8 +274,22 @@
           }
         ],
         "responses": {
-          "204": {
-            "description": "Contact deleted successfully"
+          "200": {
+            "description": "Contact deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteResponse"
+                },
+                "examples": {
+                  "deleted": {
+                    "value": {
+                      "message": "Contact deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
             "description": "Contact not found",
@@ -316,7 +337,7 @@
           "birthday"
         ],
         "properties": {
-          "_id": {
+          "id": {
             "type": "string"
           },
           "firstName": {
@@ -335,6 +356,9 @@
           "birthday": {
             "type": "string",
             "format": "date"
+          },
+          "age": {
+            "type": "number"
           }
         }
       },
@@ -364,6 +388,9 @@
           "birthday": {
             "type": "string",
             "format": "date"
+          },
+          "age": {
+            "type": "number"
           }
         }
       },
@@ -378,6 +405,14 @@
             "items": {
               "type": "string"
             }
+          }
+        }
+      },
+      "DeleteResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
           }
         }
       }
