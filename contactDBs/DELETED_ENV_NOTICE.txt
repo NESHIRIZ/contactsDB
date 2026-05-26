@@ -1,0 +1,3 @@
+The .env from this folder was removed from the repository for security.
+Create a local .env in this folder (ignored by git) based on .env.example.
+Do NOT commit your .env file.

@@ -31,60 +31,36 @@ const validateContactPayload = (contact) => {
 const getAll = async (req, res) => {
   try {
     const contacts = await mongodb.getDb().collection('contacts').find().toArray();
-    res.status(200).json(contacts);
+    return res.status(200).json(contacts);
   } catch (err) {
     console.error('Error fetching contacts:', err);
-    res.status(500).json({ error: 'Unable to fetch contacts' });
+    return res.status(500).json({ error: 'Unable to fetch contacts' });
   }
 };
 
 const getSingle = async (req, res) => {
   try {
-    const userId = new ObjectId(req.params.id);
+    const { id } = req.params;
+    if (!id || !ObjectId.isValid(id)) {
+      return res.status(400).json({ error: 'Invalid contact id' });
+    }
+
+    const userId = new ObjectId(id);
     const contact = await mongodb.getDb().collection('contacts').findOne({ _id: userId });
 
     if (!contact) {
       return res.status(404).json({ error: 'Contact not found' });
     }
 
-    res.status(200).json(contact);
+    return res.status(200).json(contact);
   } catch (err) {
     console.error('Error fetching contact:', err);
-    res.status(500).json({ error: 'Unable to fetch contact' });
+    return res.status(500).json({ error: 'Unable to fetch contact' });
   }
 };
 
 const createContact = async (req, res) => {
-  const contact = {
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    email: req.body.email,
-    favoriteColor: req.body.favoriteColor,
-    birthday: req.body.birthday
-  };
-
-  const errors = validateContactPayload(contact);
-  if (errors.length > 0) {
-    return res.status(400).json({ errors });
-  }
-
   try {
-    const response = await mongodb.getDb().collection('contacts').insertOne(contact);
-
-    if (!response.acknowledged) {
-      return res.status(500).json({ error: 'Unable to create contact' });
-    }
-
-    res.status(201).json({ id: response.insertedId });
-  } catch (err) {
-    console.error('Error creating contact:', err);
-    res.status(500).json({ error: 'Unable to create contact' });
-  }
-};
-
-const updateContact = async (req, res) => {
-  try {
-    const userId = new ObjectId(req.params.id);
     const contact = {
       firstName: req.body.firstName,
       lastName: req.body.lastName,
@@ -92,6 +68,57 @@ const updateContact = async (req, res) => {
       favoriteColor: req.body.favoriteColor,
       birthday: req.body.birthday
     };
+
+    // If age provided, coerce to number
+    if (req.body.age !== undefined) {
+      const ageNum = Number(req.body.age);
+      if (!Number.isFinite(ageNum)) {
+        return res.status(400).json({ errors: ['age must be a number'] });
+      }
+      contact.age = ageNum;
+    }
+
+    const errors = validateContactPayload(contact);
+    if (errors.length > 0) {
+      return res.status(400).json({ errors });
+    }
+
+    const response = await mongodb.getDb().collection('contacts').insertOne(contact);
+
+    if (!response.acknowledged) {
+      return res.status(500).json({ error: 'Unable to create contact' });
+    }
+
+    return res.status(201).json({ id: response.insertedId });
+  } catch (err) {
+    console.error('Error creating contact:', err);
+    return res.status(500).json({ error: 'Unable to create contact' });
+  }
+};
+
+const updateContact = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id || !ObjectId.isValid(id)) {
+      return res.status(400).json({ error: 'Invalid contact id' });
+    }
+
+    const userId = new ObjectId(id);
+    const contact = {
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      email: req.body.email,
+      favoriteColor: req.body.favoriteColor,
+      birthday: req.body.birthday
+    };
+
+    if (req.body.age !== undefined) {
+      const ageNum = Number(req.body.age);
+      if (!Number.isFinite(ageNum)) {
+        return res.status(400).json({ errors: ['age must be a number'] });
+      }
+      contact.age = ageNum;
+    }
 
     const errors = validateContactPayload(contact);
     if (errors.length > 0) {
@@ -104,26 +131,31 @@ const updateContact = async (req, res) => {
       return res.status(404).json({ error: 'Contact not found' });
     }
 
-    res.status(204).send();
+    return res.status(204).send();
   } catch (err) {
     console.error('Error updating contact:', err);
-    res.status(500).json({ error: 'Unable to update contact' });
+    return res.status(500).json({ error: 'Unable to update contact' });
   }
 };
 
 const deleteContact = async (req, res) => {
   try {
-    const userId = new ObjectId(req.params.id);
+    const { id } = req.params;
+    if (!id || !ObjectId.isValid(id)) {
+      return res.status(400).json({ error: 'Invalid contact id' });
+    }
+
+    const userId = new ObjectId(id);
     const response = await mongodb.getDb().collection('contacts').deleteOne({ _id: userId });
 
     if (response.deletedCount === 0) {
       return res.status(404).json({ error: 'Contact not found' });
     }
 
-    res.status(204).send();
+    return res.status(204).send();
   } catch (err) {
     console.error('Error deleting contact:', err);
-    res.status(500).json({ error: 'Unable to delete contact' });
+    return res.status(500).json({ error: 'Unable to delete contact' });
   }
 };
 

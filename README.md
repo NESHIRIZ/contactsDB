@@ -17,10 +17,19 @@ This repository implements the Contacts API required for BYU-Idaho W03 Project: 
 - DELETE /contacts/:id
 
 ## Local setup
-1. Copy `.env.example` to `.env` and set your values:
+1. Copy `.env.example` to `.env` and set your values.
 
+Option A: MongoDB Atlas
 ```env
-MONGODB_URI=<your mongodb connection string>
+MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/contactsDB?retryWrites=true&w=majority
+MONGODB_DB=contactsDB
+PORT=3000
+BASE_URL=http://localhost:3000
+```
+
+Option B: Local MongoDB
+```env
+MONGODB_URI=mongodb://localhost:27017
 MONGODB_DB=contactsDB
 PORT=3000
 BASE_URL=http://localhost:3000

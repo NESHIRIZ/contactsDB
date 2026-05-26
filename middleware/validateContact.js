@@ -6,8 +6,14 @@ const validateContact = (req, res, next) => {
   const errors = [];
 
   requiredFields.forEach((field) => {
-    if (!contact[field] || String(contact[field]).trim().length === 0) {
+    const value = contact[field];
+    if (value === undefined || value === null || String(value).trim().length === 0) {
       errors.push(`${field} is required`);
+    } else {
+      // normalize string values
+      if (typeof value === 'string') {
+        contact[field] = value.trim();
+      }
     }
   });
 
@@ -19,8 +25,14 @@ const validateContact = (req, res, next) => {
     errors.push('birthday must be a valid date');
   }
 
-  if (contact.age !== undefined && typeof contact.age !== 'number') {
-    errors.push('age must be a number');
+  if (contact.age !== undefined && contact.age !== null) {
+    const ageNum = Number(contact.age);
+    if (!Number.isFinite(ageNum)) {
+      errors.push('age must be a number');
+    } else {
+      // coerce age to number for downstream handlers
+      contact.age = ageNum;
+    }
   }
 
   if (errors.length > 0) {
