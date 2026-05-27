@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Contacts API",
-    "description": "CRUD API for managing contact records with MongoDB and Swagger documentation.",
+    "title": "Contacts and Companies API",
+    "description": "CRUD API for managing contact and company records with MongoDB and Swagger documentation.",
     "version": "1.0.0"
   },
   "servers": [
@@ -19,29 +19,16 @@
     "/contacts": {
       "get": {
         "summary": "Get all contacts",
+        "tags": ["Contacts"],
         "responses": {
           "200": {
-            "description": "A list of contacts",
+            "description": "A list of all contacts",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/Contact"
-                  }
-                },
-                "examples": {
-                  "contacts": {
-                    "value": [
-                      {
-                        "id": "643a91d2f5eabd0012345678",
-                        "firstName": "Alice",
-                        "lastName": "Adams",
-                        "email": "alice@example.com",
-                        "favoriteColor": "Red",
-                        "birthday": "1990-01-01"
-                      }
-                    ]
                   }
                 }
               }
@@ -61,23 +48,13 @@
       },
       "post": {
         "summary": "Create a new contact",
+        "tags": ["Contacts"],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/ContactInput"
-              },
-              "examples": {
-                "createContact": {
-                  "value": {
-                    "firstName": "John",
-                    "lastName": "Doe",
-                    "email": "john.doe@example.com",
-                    "favoriteColor": "Blue",
-                    "birthday": "1992-05-10"
-                  }
-                }
               }
             }
           }
@@ -89,18 +66,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Contact"
-                },
-                "examples": {
-                  "created": {
-                    "value": {
-                      "id": "643a91d2f5eabd0012345678",
-                      "firstName": "John",
-                      "lastName": "Doe",
-                      "email": "john.doe@example.com",
-                      "favoriteColor": "Blue",
-                      "birthday": "1992-05-10"
-                    }
-                  }
                 }
               }
             }
@@ -111,16 +76,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
-                },
-                "examples": {
-                  "validationError": {
-                    "value": {
-                      "errors": [
-                        "firstName is required",
-                        "email must be a valid email address"
-                      ]
-                    }
-                  }
                 }
               }
             }
@@ -141,6 +96,7 @@
     "/contacts/{id}": {
       "get": {
         "summary": "Get a single contact by ID",
+        "tags": ["Contacts"],
         "parameters": [
           {
             "name": "id",
@@ -148,7 +104,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Contact ID"
           }
         ],
         "responses": {
@@ -158,18 +115,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Contact"
-                },
-                "examples": {
-                  "contact": {
-                    "value": {
-                      "id": "643a91d2f5eabd0012345678",
-                      "firstName": "Alice",
-                      "lastName": "Adams",
-                      "email": "alice@example.com",
-                      "favoriteColor": "Red",
-                      "birthday": "1990-01-01"
-                    }
-                  }
                 }
               }
             }
@@ -198,6 +143,7 @@
       },
       "put": {
         "summary": "Update an existing contact",
+        "tags": ["Contacts"],
         "parameters": [
           {
             "name": "id",
@@ -205,7 +151,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Contact ID"
           }
         ],
         "requestBody": {
@@ -230,7 +177,7 @@
             }
           },
           "400": {
-            "description": "Invalid request",
+            "description": "Validation error or invalid ID",
             "content": {
               "application/json": {
                 "schema": {
@@ -263,6 +210,7 @@
       },
       "delete": {
         "summary": "Delete a contact",
+        "tags": ["Contacts"],
         "parameters": [
           {
             "name": "id",
@@ -270,7 +218,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "Contact ID"
           }
         ],
         "responses": {
@@ -279,14 +228,22 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DeleteResponse"
-                },
-                "examples": {
-                  "deleted": {
-                    "value": {
-                      "message": "Contact deleted successfully"
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
                     }
                   }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
                 }
               }
             }
@@ -301,8 +258,253 @@
               }
             }
           },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/companies": {
+      "get": {
+        "summary": "Get all companies",
+        "tags": ["Companies"],
+        "responses": {
+          "200": {
+            "description": "A list of all companies",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Company"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new company",
+        "tags": ["Companies"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompanyInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Company created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Company"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/companies/{id}": {
+      "get": {
+        "summary": "Get a single company by ID",
+        "tags": ["Companies"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Company ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Company object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Company"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Company not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Invalid ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update an existing company",
+        "tags": ["Companies"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Company ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompanyInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Company updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Company"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or invalid ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Company not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a company",
+        "tags": ["Companies"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Company ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Company deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Company not found",
             "content": {
               "application/json": {
                 "schema": {
@@ -329,36 +531,70 @@
     "schemas": {
       "Contact": {
         "type": "object",
-        "required": [
-          "firstName",
-          "lastName",
-          "email",
-          "favoriteColor",
-          "birthday"
-        ],
         "properties": {
           "id": {
-            "type": "string"
+            "type": "string",
+            "description": "Contact ID"
           },
           "firstName": {
-            "type": "string"
+            "type": "string",
+            "description": "First name"
           },
           "lastName": {
-            "type": "string"
+            "type": "string",
+            "description": "Last name"
           },
           "email": {
             "type": "string",
-            "format": "email"
+            "format": "email",
+            "description": "Email address"
+          },
+          "phone": {
+            "type": "string",
+            "description": "Phone number"
+          },
+          "company": {
+            "type": "string",
+            "description": "Company name"
+          },
+          "jobTitle": {
+            "type": "string",
+            "description": "Job title"
+          },
+          "address": {
+            "type": "string",
+            "description": "Street address"
+          },
+          "city": {
+            "type": "string",
+            "description": "City"
+          },
+          "state": {
+            "type": "string",
+            "description": "State/Province"
+          },
+          "zip": {
+            "type": "string",
+            "description": "Zip/Postal code"
           },
           "favoriteColor": {
-            "type": "string"
+            "type": "string",
+            "description": "Favorite color"
           },
           "birthday": {
             "type": "string",
-            "format": "date"
+            "format": "date",
+            "description": "Birthday"
           },
-          "age": {
-            "type": "number"
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation timestamp"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last update timestamp"
           }
         }
       },
@@ -368,29 +604,146 @@
           "firstName",
           "lastName",
           "email",
+          "phone",
+          "company",
+          "jobTitle",
+          "address",
+          "city",
+          "state",
+          "zip",
           "favoriteColor",
           "birthday"
         ],
         "properties": {
           "firstName": {
-            "type": "string"
+            "type": "string",
+            "description": "First name"
           },
           "lastName": {
-            "type": "string"
+            "type": "string",
+            "description": "Last name"
           },
           "email": {
             "type": "string",
-            "format": "email"
+            "format": "email",
+            "description": "Email address"
+          },
+          "phone": {
+            "type": "string",
+            "description": "Phone number"
+          },
+          "company": {
+            "type": "string",
+            "description": "Company name"
+          },
+          "jobTitle": {
+            "type": "string",
+            "description": "Job title"
+          },
+          "address": {
+            "type": "string",
+            "description": "Street address"
+          },
+          "city": {
+            "type": "string",
+            "description": "City"
+          },
+          "state": {
+            "type": "string",
+            "description": "State/Province"
+          },
+          "zip": {
+            "type": "string",
+            "description": "Zip/Postal code"
           },
           "favoriteColor": {
-            "type": "string"
+            "type": "string",
+            "description": "Favorite color"
           },
           "birthday": {
             "type": "string",
-            "format": "date"
+            "format": "date",
+            "description": "Birthday (YYYY-MM-DD)"
+          }
+        }
+      },
+      "Company": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Company ID"
           },
-          "age": {
-            "type": "number"
+          "name": {
+            "type": "string",
+            "description": "Company name"
+          },
+          "industry": {
+            "type": "string",
+            "description": "Industry sector"
+          },
+          "website": {
+            "type": "string",
+            "format": "uri",
+            "description": "Company website URL"
+          },
+          "foundedYear": {
+            "type": "integer",
+            "description": "Year company was founded"
+          },
+          "headquarters": {
+            "type": "string",
+            "description": "Headquarters location"
+          },
+          "employeeCount": {
+            "type": "integer",
+            "description": "Number of employees"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation timestamp"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last update timestamp"
+          }
+        }
+      },
+      "CompanyInput": {
+        "type": "object",
+        "required": [
+          "name",
+          "industry",
+          "website",
+          "headquarters"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Company name"
+          },
+          "industry": {
+            "type": "string",
+            "description": "Industry sector"
+          },
+          "website": {
+            "type": "string",
+            "format": "uri",
+            "description": "Company website URL"
+          },
+          "foundedYear": {
+            "type": "integer",
+            "description": "Year company was founded (optional)"
+          },
+          "headquarters": {
+            "type": "string",
+            "description": "Headquarters location"
+          },
+          "employeeCount": {
+            "type": "integer",
+            "description": "Number of employees (optional)"
           }
         }
       },
@@ -398,21 +751,15 @@
         "type": "object",
         "properties": {
           "error": {
-            "type": "string"
+            "type": "string",
+            "description": "Error message"
           },
           "errors": {
             "type": "array",
             "items": {
               "type": "string"
-            }
-          }
-        }
-      },
-      "DeleteResponse": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "type": "string"
+            },
+            "description": "Array of validation errors"
           }
         }
       }

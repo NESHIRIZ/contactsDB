@@ -8,6 +8,7 @@ dotenv.config();
 
 const app = express();
 const contactsRouter = require('./routes/contacts');
+const companiesRouter = require('./routes/companies');
 const swaggerDocument = require('./swagger.json');
 
 const port = process.env.PORT || 3000;
@@ -21,6 +22,7 @@ swaggerDocument.servers = [{ url: baseUrl }];
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use('/contacts', contactsRouter);
+app.use('/companies', companiesRouter);
 
 app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });

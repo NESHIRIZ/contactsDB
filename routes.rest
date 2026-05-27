@@ -1,5 +1,8 @@
 @host = http://localhost:3000
-@id = REPLACE_ID_HERE
+@contactId = REPLACE_CONTACT_ID_HERE
+@companyId = REPLACE_COMPANY_ID_HERE
+
+### ============ CONTACTS ENDPOINTS ============
 
 ### GET ALL CONTACTS
 GET {{host}}/contacts
@@ -7,7 +10,7 @@ GET {{host}}/contacts
 ###
 
 ### GET SINGLE CONTACT
-GET {{host}}/contacts/{{id}}
+GET {{host}}/contacts/{{contactId}}
 
 ###
 
@@ -16,28 +19,89 @@ POST {{host}}/contacts
 Content-Type: application/json
 
 {
-  "firstName": "Tafadzwa",
-  "lastName": "Sibanda",
-  "email": "tafadzwa@gmail.com",
-  "favoriteColor": "Black",
-  "birthday": "2004-01-10"
+  "firstName": "Jane",
+  "lastName": "Smith",
+  "email": "jane.smith@example.com",
+  "phone": "(555) 111-2222",
+  "company": "Tech Innovations Inc",
+  "jobTitle": "Product Manager",
+  "address": "100 Innovation Drive",
+  "city": "San Francisco",
+  "state": "CA",
+  "zip": "94106",
+  "favoriteColor": "Green",
+  "birthday": "1991-06-15"
 }
 
 ###
 
 ### UPDATE CONTACT
-PUT {{host}}/contacts/{{id}}
+PUT {{host}}/contacts/{{contactId}}
 Content-Type: application/json
 
 {
-  "firstName": "Tafadzwa",
-  "lastName": "Sibanda",
-  "email": "tafadzwa.updated@gmail.com",
-  "favoriteColor": "Blue",
-  "birthday": "2004-01-10"
+  "firstName": "Jane",
+  "lastName": "Smith",
+  "email": "jane.smith.updated@example.com",
+  "phone": "(555) 222-3333",
+  "company": "Global Finance Solutions",
+  "jobTitle": "Senior Product Manager",
+  "address": "200 Finance Ave",
+  "city": "New York",
+  "state": "NY",
+  "zip": "10004",
+  "favoriteColor": "Purple",
+  "birthday": "1991-06-15"
 }
 
 ###
 
 ### DELETE CONTACT
-DELETE {{host}}/contacts/{{id}}
+DELETE {{host}}/contacts/{{contactId}}
+
+###
+
+### ============ COMPANIES ENDPOINTS ============
+
+### GET ALL COMPANIES
+GET {{host}}/companies
+
+###
+
+### GET SINGLE COMPANY
+GET {{host}}/companies/{{companyId}}
+
+###
+
+### CREATE COMPANY
+POST {{host}}/companies
+Content-Type: application/json
+
+{
+  "name": "Innovation Ventures",
+  "industry": "Venture Capital",
+  "website": "https://innovationventures.com",
+  "foundedYear": 2018,
+  "headquarters": "Austin, TX",
+  "employeeCount": 45
+}
+
+###
+
+### UPDATE COMPANY
+PUT {{host}}/companies/{{companyId}}
+Content-Type: application/json
+
+{
+  "name": "Innovation Ventures LLC",
+  "industry": "Private Equity",
+  "website": "https://innovationventures.io",
+  "foundedYear": 2018,
+  "headquarters": "Austin, TX",
+  "employeeCount": 60
+}
+
+###
+
+### DELETE COMPANY
+DELETE {{host}}/companies/{{companyId}}

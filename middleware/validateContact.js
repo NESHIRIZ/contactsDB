@@ -1,4 +1,4 @@
-const requiredFields = ['firstName', 'lastName', 'email', 'favoriteColor', 'birthday'];
+const requiredFields = ['firstName', 'lastName', 'email', 'phone', 'company', 'jobTitle', 'address', 'city', 'state', 'zip', 'favoriteColor', 'birthday'];
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const validateContact = (req, res, next) => {
@@ -23,16 +23,6 @@ const validateContact = (req, res, next) => {
 
   if (contact.birthday && Number.isNaN(Date.parse(contact.birthday))) {
     errors.push('birthday must be a valid date');
-  }
-
-  if (contact.age !== undefined && contact.age !== null) {
-    const ageNum = Number(contact.age);
-    if (!Number.isFinite(ageNum)) {
-      errors.push('age must be a number');
-    } else {
-      // coerce age to number for downstream handlers
-      contact.age = ageNum;
-    }
   }
 
   if (errors.length > 0) {

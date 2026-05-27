@@ -21,6 +21,41 @@ const contactSchema = new mongoose.Schema(
       lowercase: true,
       match: [emailRegex, 'email must be a valid email address'],
     },
+    phone: {
+      type: String,
+      required: [true, 'phone is required'],
+      trim: true,
+    },
+    company: {
+      type: String,
+      required: [true, 'company is required'],
+      trim: true,
+    },
+    jobTitle: {
+      type: String,
+      required: [true, 'jobTitle is required'],
+      trim: true,
+    },
+    address: {
+      type: String,
+      required: [true, 'address is required'],
+      trim: true,
+    },
+    city: {
+      type: String,
+      required: [true, 'city is required'],
+      trim: true,
+    },
+    state: {
+      type: String,
+      required: [true, 'state is required'],
+      trim: true,
+    },
+    zip: {
+      type: String,
+      required: [true, 'zip is required'],
+      trim: true,
+    },
     favoriteColor: {
       type: String,
       required: [true, 'favoriteColor is required'],
@@ -29,10 +64,6 @@ const contactSchema = new mongoose.Schema(
     birthday: {
       type: Date,
       required: [true, 'birthday is required'],
-    },
-    age: {
-      type: Number,
-      min: [0, 'age must be a number'],
     },
   },
   {
