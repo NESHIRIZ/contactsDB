@@ -21,6 +21,10 @@ app.use(cors());
 swaggerDocument.servers = [{ url: baseUrl }];
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
+app.get('/', (req, res) => {
+  res.status(200).send('API is running successfully');
+});
+
 app.use('/contacts', contactsRouter);
 app.use('/companies', companiesRouter);
 

@@ -24,7 +24,7 @@ const getAll = async (req, res) => {
 const getSingle = async (req, res) => {
   try {
     const { id } = req.params;
-    if (!id || !ObjectId.isValid(id)) {
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ error: 'Invalid contact id' });
     }
 
