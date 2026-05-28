@@ -95,7 +95,7 @@ const deleteCompany = async (req, res) => {
     return res.status(200).json({ message: 'Company deleted successfully' });
   } catch (err) {
     console.error('Error deleting company:', err);
-    return res.status(500).json({ error: 'Unable to delete company' });
+    return res.status(500).json({ error: 'Server error' });
   }
 };
 
