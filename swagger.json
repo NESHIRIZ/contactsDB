@@ -5,16 +5,7 @@
     "description": "CRUD API for managing contact and company records with MongoDB and Swagger documentation.",
     "version": "1.0.0"
   },
-  "servers": [
-    {
-      "url": "https://contactsdb-o4ps.onrender.com",
-      "description": "Render deployment"
-    },
-    {
-      "url": "http://localhost:3000",
-      "description": "Local development server"
-    }
-  ],
+  
   "paths": {
     "/contacts": {
       "get": {

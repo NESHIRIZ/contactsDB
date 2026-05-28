@@ -42,7 +42,8 @@ const getSingle = async (req, res) => {
 
 const createContact = async (req, res) => {
   try {
-    const contact = await Contact.create(req.body);
+    const contact = new Contact(req.body);
+    await contact.save();
     return res.status(201).json(contact);
   } catch (err) {
     if (err.name === 'ValidationError') {
