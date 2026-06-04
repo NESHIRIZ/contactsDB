@@ -2,7 +2,13 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'dev_jwt_secret_change_in_production';
+const getJwtSecret = () => {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error('JWT_SECRET environment variable is required');
+  }
+  return secret;
+};
 
 const register = async (req, res) => {
   try {
@@ -45,8 +51,9 @@ const login = async (req, res) => {
     }
 
     const payload = { id: user._id, email: user.email };
-    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' });
+    const token = jwt.sign(payload, getJwtSecret(), { expiresIn: '7d' });
 
+    console.log('Auth login: generated token for user', user._id ? user._id.toString() : user.email, token.substring(0, 16) + '...');
     return res.status(200).json({ token });
   } catch (err) {
     console.error('Error logging in:', err);
