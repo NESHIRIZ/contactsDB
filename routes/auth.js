@@ -1,9 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
+const authController = require('../controllers/auth');
 
 const googleAuthEnabled = !!process.env.GOOGLE_CLIENT_ID && !!process.env.GOOGLE_CLIENT_SECRET;
 
+// Register / Login / Logout (JWT-based)
+router.post('/register', authController.register);
+router.post('/login', authController.login);
+router.post('/logout', authController.logout);
+
+// Preserve Google OAuth routes (disabled safely if creds missing)
 router.get('/login', (req, res) => {
   return res.json({
     message: googleAuthEnabled
@@ -27,18 +34,6 @@ router.get('/google/callback', (req, res, next) => {
   return passport.authenticate('google', { failureRedirect: '/?error=auth_failed' })(req, res, next);
 }, (req, res) => {
   res.redirect('/?authenticated=true');
-});
-
-router.get('/logout', (req, res) => {
-  if (!req.logout) {
-    return res.status(503).json({ error: 'Logout is unavailable' });
-  }
-  req.logout((err) => {
-    if (err) {
-      return res.status(500).json({ error: 'Logout failed' });
-    }
-    res.json({ message: 'Logged out successfully' });
-  });
 });
 
 router.get('/profile', (req, res) => {

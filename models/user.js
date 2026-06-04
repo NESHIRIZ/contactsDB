@@ -2,9 +2,14 @@ const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema(
   {
-    displayName: {
+    username: {
       type: String,
       required: true,
+      unique: true,
+      trim: true,
+    },
+    displayName: {
+      type: String,
       trim: true,
     },
     email: {
@@ -13,6 +18,11 @@ const userSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
       trim: true,
+    },
+    password: {
+      type: String,
+      required: true,
+      select: false,
     },
     googleId: {
       type: String,
@@ -30,6 +40,7 @@ const userSchema = new mongoose.Schema(
         ret.id = ret._id.toString();
         delete ret._id;
         delete ret.__v;
+        delete ret.password;
       },
     },
   }

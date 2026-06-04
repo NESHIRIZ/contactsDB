@@ -293,6 +293,11 @@
         }
       },
       "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "summary": "Create a new company",
         "tags": ["Companies"],
         "requestBody": {
@@ -388,6 +393,11 @@
         }
       },
       "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "summary": "Update an existing company",
         "tags": ["Companies"],
         "parameters": [
@@ -455,6 +465,11 @@
         }
       },
       "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "summary": "Delete a company",
         "tags": ["Companies"],
         "parameters": [
@@ -519,6 +534,13 @@
     }
   },
   "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
     "schemas": {
       "Contact": {
         "type": "object",

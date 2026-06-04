@@ -1,0 +1,67 @@
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const User = require('../models/user');
+
+const JWT_SECRET = process.env.JWT_SECRET || 'dev_jwt_secret_change_in_production';
+
+const register = async (req, res) => {
+  try {
+    const { username, email, password, displayName } = req.body || {};
+    if (!username || !email || !password) {
+      return res.status(400).json({ error: 'username, email and password are required' });
+    }
+
+    const existing = await User.findOne({ $or: [{ email }, { username }] });
+    if (existing) {
+      return res.status(400).json({ error: 'User with that email or username already exists' });
+    }
+
+    const hashed = await bcrypt.hash(password, 10);
+    const user = new User({ username, email, password: hashed, displayName });
+    await user.save();
+
+    return res.status(201).json({ message: 'User registered successfully' });
+  } catch (err) {
+    console.error('Error registering user:', err);
+    return res.status(500).json({ error: 'Server error' });
+  }
+};
+
+const login = async (req, res) => {
+  try {
+    const { email, password } = req.body || {};
+    if (!email || !password) {
+      return res.status(400).json({ error: 'email and password are required' });
+    }
+
+    const user = await User.findOne({ email }).select('+password');
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    const payload = { id: user._id, email: user.email };
+    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' });
+
+    return res.status(200).json({ token });
+  } catch (err) {
+    console.error('Error logging in:', err);
+    return res.status(500).json({ error: 'Server error' });
+  }
+};
+
+const logout = async (req, res) => {
+  // With JWT there is no server-side invalidation by default.
+  // Clients should discard the token. Return success for compatibility.
+  return res.status(200).json({ message: 'Logged out' });
+};
+
+module.exports = {
+  register,
+  login,
+  logout,
+};
