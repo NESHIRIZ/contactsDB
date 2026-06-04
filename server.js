@@ -1,17 +1,15 @@
+require('dotenv').config();
 const express = require('express');
-const dotenv = require('dotenv');
 const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
+const session = require('express-session');
 const mongoose = require('mongoose');
-
-// Load local .env only in non-production so production env vars from Render take precedence
-if (process.env.NODE_ENV !== 'production') {
-  dotenv.config();
-}
+const passport = require('./config/passport');
 
 const app = express();
 const contactsRouter = require('./routes/contacts');
 const companiesRouter = require('./routes/companies');
+const authRouter = require('./routes/auth');
 const swaggerDocument = require('./swagger.json');
 
 const port = process.env.PORT || 3000;
@@ -19,6 +17,7 @@ const isProduction = process.env.NODE_ENV === 'production';
 const prodUrl = process.env.BASE_URL || process.env.RENDER_EXTERNAL_URL || 'https://contactsdb-o4ps.onrender.com';
 const baseUrl = isProduction ? prodUrl : `http://localhost:${port}`;
 const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/contactsDB';
+const sessionSecret = process.env.SESSION_SECRET || 'your-secret-key-change-in-production';
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -26,6 +25,21 @@ app.use(cors({
   origin: process.env.CLIENT_URL || baseUrl,
   credentials: true,
 }));
+app.use(
+  session({
+    secret: sessionSecret,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === 'production',
+      httpOnly: true,
+      sameSite: 'lax',
+      maxAge: 24 * 60 * 60 * 1000,
+    },
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Set Swagger/OpenAPI servers dynamically based on environment
 swaggerDocument.servers = isProduction
@@ -38,6 +52,7 @@ app.get('/', (req, res) => {
   res.status(200).send('API is running successfully');
 });
 
+app.use('/auth', authRouter);
 app.use('/contacts', contactsRouter);
 app.use('/companies', companiesRouter);
 

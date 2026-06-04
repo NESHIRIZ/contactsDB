@@ -1,24 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-const authController = require('../controllers/auth');
+const { register, login, logout } = require('../controllers/auth');
 
 const googleAuthEnabled = !!process.env.GOOGLE_CLIENT_ID && !!process.env.GOOGLE_CLIENT_SECRET;
 
-// Register / Login / Logout (JWT-based)
-router.post('/register', authController.register);
-router.post('/login', authController.login);
-router.post('/logout', authController.logout);
+// JWT auth endpoints
+router.post('/register', register);
+router.post('/login', login);
+router.post('/logout', logout);
 
-// Preserve Google OAuth routes (disabled safely if creds missing)
-router.get('/login', (req, res) => {
-  return res.json({
-    message: googleAuthEnabled
-      ? 'Redirecting to Google login'
-      : 'OAuth is disabled in this deployment',
-    loginUrl: googleAuthEnabled ? '/auth/google' : null,
-  });
-});
+// Preserve Google OAuth routes separately so they do not override JWT endpoints
 
 router.get('/google', (req, res, next) => {
   if (!googleAuthEnabled) {
