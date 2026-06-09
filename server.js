@@ -16,31 +16,28 @@ const port = process.env.PORT || 3000;
 const isProduction = process.env.NODE_ENV === 'production';
 const prodUrl = process.env.BASE_URL || process.env.RENDER_EXTERNAL_URL || 'https://contactsdb-o4ps.onrender.com';
 const baseUrl = isProduction ? prodUrl : `http://localhost:${port}`;
-const mongoUri = process.env.MONGODB_URI;
+const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/contactsDB';
 const sessionSecret = process.env.SESSION_SECRET || 'your-secret-key-change-in-production';
-
-if (!mongoUri) {
-  console.error('\n❌ Missing required environment variable: MONGODB_URI');
-  console.error('Please set MONGODB_URI in your .env or environment variables.');
-  console.error('Example: mongodb+srv://username:password@cluster0.mongodb.net/contactsDB?retryWrites=true&w=majority');
-  process.exit(1);
-}
-
-// Enhanced MongoDB diagnostics
-console.log('\n=== MongoDB Configuration ===');
-console.log('MONGODB_URI Loaded:', true);
-console.log('MONGODB_URI source: environment variable');
-console.log('Using MongoDB URI: [ATLAS]', mongoUri.substring(0, 60) + '...');
-console.log('');
 
 const validateEnv = () => {
   const missing = [];
   if (!process.env.JWT_SECRET) missing.push('JWT_SECRET');
+  if (isProduction && !process.env.MONGODB_URI) missing.push('MONGODB_URI');
   if (missing.length > 0) {
-    console.error('Missing required environment variables:', missing.join(', '));
+    console.error('\n❌ Missing required environment variables:', missing.join(', '));
+    console.error('Please set the missing variables in your .env or environment variables.');
     process.exit(1);
   }
 };
+
+if (!process.env.MONGODB_URI && !isProduction) {
+  console.warn('⚠️ MONGODB_URI not set; using local MongoDB:', mongoUri);
+}
+
+console.log('\n=== MongoDB Configuration ===');
+console.log('MongoDB URI:', mongoUri.includes('localhost') ? mongoUri : '[ATLAS URI hidden]');
+console.log('Production mode:', isProduction);
+console.log('');
 
 validateEnv();
 
