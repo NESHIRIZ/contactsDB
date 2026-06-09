@@ -684,6 +684,12 @@
           "email": { "type": "string", "format": "email", "description": "User email" },
           "password": { "type": "string", "format": "password", "description": "User password" },
           "displayName": { "type": "string", "description": "Optional display name" }
+        },
+        "example": {
+          "username": "jdoe",
+          "email": "jdoe@example.com",
+          "password": "Password123!",
+          "displayName": "John Doe"
         }
       },
       "AuthLogin": {
@@ -692,6 +698,10 @@
         "properties": {
           "email": { "type": "string", "format": "email", "description": "User email" },
           "password": { "type": "string", "format": "password", "description": "User password" }
+        },
+        "example": {
+          "email": "jdoe@example.com",
+          "password": "Password123!"
         }
       },
       "AuthTokenResponse": {
@@ -842,6 +852,20 @@
             "format": "date",
             "description": "Birthday (YYYY-MM-DD)"
           }
+        },
+        "example": {
+          "firstName": "Jane",
+          "lastName": "Doe",
+          "email": "jane.doe@example.com",
+          "phone": "555-123-4567",
+          "company": "Acme Corporation",
+          "jobTitle": "Product Manager",
+          "address": "123 Main Street",
+          "city": "Provo",
+          "state": "UT",
+          "zip": "84606",
+          "favoriteColor": "Blue",
+          "birthday": "1990-07-15"
         }
       },
       "Company": {
@@ -922,6 +946,14 @@
             "type": "integer",
             "description": "Number of employees (optional)"
           }
+        },
+        "example": {
+          "name": "Acme Corporation",
+          "industry": "Technology",
+          "website": "https://www.acme.com",
+          "foundedYear": 1999,
+          "headquarters": "Provo, UT",
+          "employeeCount": 120
         }
       },
       "ErrorResponse": {

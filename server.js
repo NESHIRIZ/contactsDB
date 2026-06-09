@@ -16,8 +16,33 @@ const port = process.env.PORT || 3000;
 const isProduction = process.env.NODE_ENV === 'production';
 const prodUrl = process.env.BASE_URL || process.env.RENDER_EXTERNAL_URL || 'https://contactsdb-o4ps.onrender.com';
 const baseUrl = isProduction ? prodUrl : `http://localhost:${port}`;
-const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/contactsDB';
+const mongoUri = process.env.MONGODB_URI;
 const sessionSecret = process.env.SESSION_SECRET || 'your-secret-key-change-in-production';
+
+if (!mongoUri) {
+  console.error('\n❌ Missing required environment variable: MONGODB_URI');
+  console.error('Please set MONGODB_URI in your .env or environment variables.');
+  console.error('Example: mongodb+srv://username:password@cluster0.mongodb.net/contactsDB?retryWrites=true&w=majority');
+  process.exit(1);
+}
+
+// Enhanced MongoDB diagnostics
+console.log('\n=== MongoDB Configuration ===');
+console.log('MONGODB_URI Loaded:', true);
+console.log('MONGODB_URI source: environment variable');
+console.log('Using MongoDB URI: [ATLAS]', mongoUri.substring(0, 60) + '...');
+console.log('');
+
+const validateEnv = () => {
+  const missing = [];
+  if (!process.env.JWT_SECRET) missing.push('JWT_SECRET');
+  if (missing.length > 0) {
+    console.error('Missing required environment variables:', missing.join(', '));
+    process.exit(1);
+  }
+};
+
+validateEnv();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -65,18 +90,135 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Server error' });
 });
 
-mongoose
-  .connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => {
-    app.listen(port, () => {
-      console.log(`Contacts API listening on port ${port}`);
-      console.log(`Swagger docs available at ${baseUrl}/api-docs`);
-      if (swaggerDocument.servers && swaggerDocument.servers.length) {
-        console.log('Swagger server set to:', swaggerDocument.servers[0].url);
-      }
+const connectToMongo = async (uri) => {
+  console.log('Attempting MongoDB connection...');
+  console.log('URI Loaded:', !!process.env.MONGODB_URI);
+  console.log('URI Preview:', uri.includes('localhost') ? uri : uri.substring(0, 60) + '...');
+  
+  try {
+    await mongoose.connect(uri, { 
+      useNewUrlParser: true, 
+      useUnifiedTopology: true,
+      connectTimeoutMS: 5000,
+      serverSelectionTimeoutMS: 5000,
     });
-  })
-  .catch((error) => {
-    console.error('MongoDB connection failed', error);
+    console.log('✓ MongoDB connected successfully');
+    return true;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const parseMongoError = (error, uri) => {
+  const errMsg = error.message || error.toString();
+  const isAtlas = uri.includes('mongodb+srv');
+  
+  console.error('\n=== MongoDB Connection Error Details ===');
+  console.error('URI Type:', isAtlas ? 'ATLAS (mongodb+srv)' : 'LOCAL');
+  console.error('Error Name:', error.name || 'N/A');
+  console.error('Error Code:', error.code || 'N/A');
+  console.error('Error Message:', errMsg);
+  
+  if (!process.env.MONGODB_URI) {
+    console.error('\n❌ ISSUE: MONGODB_URI is not set');
+    console.error('SOLUTION:');
+    console.error('  • Set MONGODB_URI in .env or your environment');
+    console.error('  • Use a valid Atlas connection string, for example:');
+    console.error('    mongodb+srv://username:password@cluster0.mongodb.net/contactsDB?retryWrites=true&w=majority');
+  }
+
+  if (error.name === 'MongoParseError' || errMsg.includes('Invalid connection string') || errMsg.includes('Invalid connection')) {
+    console.error('\n❌ ISSUE: Invalid MongoDB connection string');
+    console.error('Possible causes:');
+    console.error('  1. Malformed URI format');
+    console.error('  2. Missing database name or credentials');
+    console.error('  3. Wrong cluster host or DNS syntax');
+    console.error('\nSOLUTION:');
+    console.error('  • Verify the connection string in .env MONGODB_URI');
+    console.error('  • Use the exact Atlas URI format from MongoDB dashboard');
+  } else if (errMsg.includes('ECONNREFUSED')) {
+    if (isAtlas) {
+      console.error('\n❌ ISSUE: Cannot reach MongoDB Atlas');
+      console.error('Possible causes:');
+      console.error('  1. Network connectivity issue');
+      console.error('  2. Atlas cluster is paused or not running');
+      console.error('  3. IP address not whitelisted in MongoDB Atlas');
+      console.error('  4. Invalid cluster DNS name in connection string');
+      console.error('\nSOLUTION:');
+      console.error('  • Check MongoDB Atlas dashboard: https://cloud.mongodb.com');
+      console.error('  • Verify cluster "cluster0" exists and is running');
+      console.error('  • Add your IP address to Network Access');
+      console.error('  • Verify connection string credentials (username/password)');
+    } else {
+      console.error('\n❌ ISSUE: Cannot reach local MongoDB');
+      console.error('Possible causes:');
+      console.error('  1. MongoDB is not running');
+      console.error('  2. MongoDB is not listening on 127.0.0.1:27017');
+      console.error('  3. MongoDB service is stopped');
+      console.error('\nSOLUTION:');
+      console.error('  • Start MongoDB with: mongod');
+      console.error('  • Or verify it\'s running: mongosh "mongodb://localhost:27017"');
+    }
+  } else if (errMsg.includes('ENOTFOUND') || errMsg.includes('querySrv')) {
+    console.error('\n❌ ISSUE: DNS resolution failed');
+    console.error('Possible causes:');
+    console.error('  1. Invalid MongoDB Atlas cluster name in connection string');
+    console.error('  2. Network/firewall blocking DNS queries');
+    console.error('  3. MongoDB Atlas service is down');
+    console.error('\nSOLUTION:');
+    console.error('  • Verify connection string from MongoDB Atlas dashboard');
+    console.error('  • Check cluster name: "cluster0" (from URI)');
+    console.error('  • Test DNS: nslookup _mongodb._tcp.cluster0.a9ltzxv.mongodb.net');
+  } else if (errMsg.toLowerCase().includes('auth') || errMsg.includes('SCRAM')) {
+    console.error('\n❌ ISSUE: Authentication failed');
+    console.error('Possible causes:');
+    console.error('  1. Invalid username or password');
+    console.error('  2. User permissions issue');
+    console.error('  3. Password contains special characters that need URL encoding');
+    console.error('\nSOLUTION:');
+    console.error('  • Verify credentials in .env MONGODB_URI');
+    console.error('  • Check MongoDB Atlas Users section');
+    console.error('  • Ensure password is properly URL-encoded if needed');
+  } else if (errMsg.includes('timed out') || errMsg.includes('timeout')) {
+    console.error('\n❌ ISSUE: Connection timeout');
+    console.error('Possible causes:');
+    console.error('  1. Network is too slow');
+    console.error('  2. MongoDB server is unresponsive');
+    console.error('  3. Firewall blocking connection');
+    console.error('\nSOLUTION:');
+    console.error('  • Check network connectivity');
+    console.error('  • Verify MongoDB Atlas cluster is running');
+    console.error('  • Check firewall settings');
+  } else {
+    console.error('\n❌ ISSUE: Unexpected MongoDB error');
+    console.error('Full error:', error);
+  }
+  console.error('\n======================================\n');
+};
+
+const startServer = async () => {
+  console.log('Starting Contacts API server...\n');
+  
+  try {
+    await connectToMongo(mongoUri);
+  } catch (error) {
+    console.error('\n❌ MongoDB Atlas connection failed');
+    parseMongoError(error, mongoUri);
+    console.error('=== NEXT STEPS ===');
+    console.error('1. Verify MONGODB_URI in .env or environment variables');
+    console.error('2. Confirm Atlas cluster is running and network access is allowed');
+    console.error('3. Restart the server after fixing the URI');
     process.exit(1);
+  }
+
+  app.listen(port, () => {
+    console.log(`\n✓ Contacts API listening on port ${port}`);
+    console.log(`✓ Swagger docs available at ${baseUrl}/api-docs`);
+    if (swaggerDocument.servers && swaggerDocument.servers.length) {
+      console.log(`✓ Swagger server: ${swaggerDocument.servers[0].url}`);
+    }
+    console.log('');
   });
+};
+
+startServer();

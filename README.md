@@ -15,6 +15,14 @@ This repository implements the Contacts API required for BYU-Idaho W03 Project: 
 - POST /contacts
 - PUT /contacts/:id
 - DELETE /contacts/:id
+- GET /companies
+- GET /companies/:id
+- POST /companies
+- PUT /companies/:id
+- DELETE /companies/:id
+- POST /auth/register
+- POST /auth/login
+- POST /auth/logout
 
 ## Local setup
 1. Copy `.env.example` to `.env` and set your values.
@@ -29,7 +37,7 @@ BASE_URL=http://localhost:3000
 
 Option B: Local MongoDB
 ```env
-MONGODB_URI=mongodb://localhost:27017
+MONGODB_URI=mongodb://localhost:27017/contactsDB
 MONGODB_DB=contactsDB
 PORT=3000
 BASE_URL=http://localhost:3000
@@ -63,7 +71,9 @@ npm run seed
 - Swagger documentation is available at `/api-docs` and includes request/response schemas.
 
 ## Video checklist
-- Show Swagger UI and execute GET/POST/PUT/DELETE routes.
-- Show MongoDB Compass or Atlas data with contacts.
+- Show Swagger UI on Render and execute GET/POST/PUT/DELETE routes for both `contacts` and `companies`.
+- Show MongoDB Compass or Atlas data updates for both collections.
+- Show validation errors and 400 responses for invalid input.
+- Show 404 responses for missing resources.
 - Show `.env` is not committed and `node_modules` is ignored.
 - Show Render deployment with `/api-docs` working.

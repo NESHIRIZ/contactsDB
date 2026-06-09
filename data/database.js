@@ -3,7 +3,7 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-const uri = process.env.MONGODB_URI || process.env.MONGODB_LOCAL_URI || 'mongodb://localhost:27017';
+const uri = process.env.MONGODB_URI;
 const dbName = process.env.MONGODB_DB || 'contactsDB';
 const { MongoClient } = mongodb;
 
@@ -16,7 +16,7 @@ const initDb = async (callback) => {
   }
 
   if (!uri) {
-    return callback(new Error('MONGODB_URI or MONGODB_LOCAL_URI environment variable is required'));
+    return callback(new Error('MONGODB_URI environment variable is required'));
   }
 
   if (uri.includes('example.mongodb.net')) {
