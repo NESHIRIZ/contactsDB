@@ -9,6 +9,8 @@ const passport = require('./config/passport');
 const app = express();
 const contactsRouter = require('./routes/contacts');
 const companiesRouter = require('./routes/companies');
+const productsRouter = require('./routes/products');
+const reviewsRouter = require('./routes/reviews');
 const authRouter = require('./routes/auth');
 const swaggerDocument = require('./swagger.json');
 const db = require('./config/db');
@@ -78,6 +80,8 @@ app.get('/', (req, res) => {
 app.use('/auth', authRouter);
 app.use('/contacts', contactsRouter);
 app.use('/companies', companiesRouter);
+app.use('/products', productsRouter);
+app.use('/reviews', reviewsRouter);
 
 app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });
@@ -112,4 +116,8 @@ const startServer = async () => {
   });
 };
 
-startServer();
+if (process.env.NODE_ENV !== 'test') {
+  startServer();
+}
+
+module.exports = app;
