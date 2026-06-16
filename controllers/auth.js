@@ -62,9 +62,31 @@ const login = async (req, res) => {
 };
 
 const logout = async (req, res) => {
-  // With JWT there is no server-side invalidation by default.
-  // Clients should discard the token. Return success for compatibility.
-  return res.status(200).json({ message: 'Logged out' });
+  try {
+    if (req.logout) {
+      return req.logout((err) => {
+        if (err) {
+          console.error('Logout error:', err);
+          return res.status(500).json({ error: 'Logout failed' });
+        }
+
+        if (req.session) {
+          req.session.destroy(() => {});
+        }
+
+        return res.status(200).json({ message: 'Logged out' });
+      });
+    }
+
+    if (req.session) {
+      req.session.destroy(() => {});
+    }
+
+    return res.status(200).json({ message: 'Logged out' });
+  } catch (err) {
+    console.error('Logout error:', err);
+    return res.status(500).json({ error: 'Logout failed' });
+  }
 };
 
 module.exports = {
